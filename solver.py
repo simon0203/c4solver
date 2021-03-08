@@ -21,6 +21,20 @@ class Board:
         # updated when after each play in a column (True if last play created 4-in-row)
         self.is_win = False
 
+    # print a readable board representation
+    def show(self):
+        for i in range(nb_rows):
+            row_str = ""
+            for j in range(nb_cols):
+                if self.board[nb_rows-1-i][j] == 1:
+                    row_str += "O"
+                elif self.board[nb_rows-1-i][j] == 2:
+                    row_str += "X"
+                else:
+                    row_str += "."
+            print(row_str)
+        print(" ")
+
     def reverse_player(self):
         if self.player == 1:
             self.player = 2
@@ -177,6 +191,6 @@ class Win_Loss:
 
 if __name__ == "__main__":
     b = Board()
-    print(b.board)
+    b.show()
     compute = Win_Loss()
     print(compute.compute_is_win(b))
