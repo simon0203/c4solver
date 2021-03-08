@@ -156,3 +156,16 @@ class Board:
             return False
         else:
             return True
+
+# unit tests for Board class, can be checked with python board.py
+if __name__ == "__main__":
+    # simple tests of play() and show()
+    b = Board()
+    print("Empty default size board:")
+    b.show()
+    b.play(2)
+    b.play(3)
+    b.play(2)
+    b.play(2)
+    print("Board after play at 2, 3, 2, 2:")
+    b.show()
