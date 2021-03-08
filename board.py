@@ -24,6 +24,9 @@ class Board:
         # list of played moves (used to reverse a move)
         self.play_list = []
 
+        # move ordering
+        self.ordered_moves = []
+
     # print a readable board representation
     def show(self):
         for i in range(self.nb_rows):
@@ -166,6 +169,24 @@ class Board:
             return False
         else:
             return True
+
+    def order_moves(self):
+        self.ordered_moves = []
+
+        # simple order (available column order)
+        for j in range(self.nb_cols):
+            if self.heights[j] < self.nb_rows:
+                self.ordered_moves.append(j)
+
+        # priority to follow-up moves
+        # followup_j = -1
+        # if self.play_list:
+        #     followup_j=self.play_list[-1]
+        #     if self.heights[followup_j] < self.nb_rows:
+        #         self.ordered_moves.append(followup_j)
+        # for j in range(self.nb_cols):
+        #     if j !=  followup_j and self.heights[j] < self.nb_rows:
+        #         self.ordered_moves.append(j)
 
 # unit tests for Board class, can be checked with python board.py
 if __name__ == "__main__":

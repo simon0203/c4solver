@@ -26,7 +26,8 @@ class Win_Loss:
     # return True if the current player has a winning move
     def recursive_win_loss(self, board, depth=0):
         self.total_calls += 1
-        for j in range(board.nb_cols):
+        board.order_moves()
+        for j in board.ordered_moves:
             if depth<3:
                 s = ""
                 for k in range(depth+1):
