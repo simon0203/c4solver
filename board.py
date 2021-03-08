@@ -5,7 +5,7 @@ class Board:
     def __init__(self, nb_rows=6, nb_cols=7):
         self.nb_rows = nb_rows
         self.nb_cols = nb_cols
-        
+
         # board raw representation
         self.board = [[0 for j in range(self.nb_cols)] for i in range(self.nb_rows)]
         
@@ -20,6 +20,9 @@ class Board:
 
         # updated when after each play in a column (True if last play created 4-in-row)
         self.is_win = False
+
+        # list of played moves (used to reverse a move)
+        self.play_list = []
 
     # print a readable board representation
     def show(self):
@@ -49,7 +52,7 @@ class Board:
             self.board[col_height][j] = self.player
             self.heights[j] = col_height + 1
             self.total_empty = self.total_empty -1
-
+            self.play_list.append(j)
             self.update_win(j)
 
             self.reverse_player()
@@ -142,7 +145,14 @@ class Board:
                 #print("win 12")
                 return
     
-    def remove_last_play(self, j):
+    def remove_last_play(self):
+        # safe guard, nothing to do if the list of moves is empty
+        if not self.play_list:
+            return
+
+        # get and remove the last move from the list of played moves
+        j = self.play_list.pop()
+
         i = self.heights[j] - 1
         if i >= 0:
             self.board[i][j] = 0
@@ -177,8 +187,7 @@ if __name__ == "__main__":
     print("No win after play at 5:")
     b.play(5)
     b.show()
-    b.update_win(5)
-    print(b.is_win)
+    print("is_win=", b.is_win)
     print(" ")
 
     b.play(6)
@@ -186,5 +195,19 @@ if __name__ == "__main__":
     print("Win after play at 5:")
     b.play(5)
     b.show()
-    b.update_win(5)
-    print(b.is_win)
+    print("is_win=", b.is_win)
+    print(" ")
+
+    # test of remove_last_play()
+    print("Reverse one move:")
+    b.remove_last_play()
+    b.show()
+    print("is_win=", b.is_win)
+    print(" ")
+
+    print("Reverse one more move:")
+    b.remove_last_play()
+    b.show()
+    print("is_win=", b.is_win)
+    print(" ")
+
