@@ -41,6 +41,19 @@ class Board:
             print(row_str)
         print(" ")
 
+    # string representation for storing in a transposition table
+    def string_rep(self):
+        str_rep = ""
+        for i in range(self.nb_rows):
+            for j in range(self.nb_cols):
+                if self.board[i][j] == 1:
+                    str_rep += "O"
+                elif self.board[i][j] == 2:
+                    str_rep += "X"
+                else:
+                    str_rep += "."
+        return str_rep
+
     def reverse_player(self):
         if self.player == 1:
             self.player = 2
@@ -232,3 +245,6 @@ if __name__ == "__main__":
     print("is_win=", b.is_win)
     print(" ")
 
+    # test of string representation
+    print("String representation:")
+    print(b.string_rep())
