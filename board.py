@@ -169,3 +169,22 @@ if __name__ == "__main__":
     b.play(2)
     print("Board after play at 2, 3, 2, 2:")
     b.show()
+
+    # check update_win
+    b.play(3)
+    b.play(4)
+    b.play(4)
+    print("No win after play at 5:")
+    b.play(5)
+    b.show()
+    b.update_win(5)
+    print(b.is_win)
+    print(" ")
+
+    b.play(6)
+    b.play(6)
+    print("Win after play at 5:")
+    b.play(5)
+    b.show()
+    b.update_win(5)
+    print(b.is_win)
