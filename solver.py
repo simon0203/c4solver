@@ -9,9 +9,14 @@ class Win_Loss:
     def __init__(self):
         self.total_calls = 0
         self.elapsed_time = 0
+        self.transpo_table = set()
 
     def compute_is_win(self, board):
         self.total_calls = 0
+
+        #note : we clear the transpo table for now (could be changed later)
+        self.transpo_table = set()
+
         t_start = time.process_time()
         result = self.recursive_win_loss(board)
         t_stop = time.process_time()
@@ -21,6 +26,7 @@ class Win_Loss:
     def show_stats(self):
         print("Elapsed time:", self.elapsed_time)
         print("Total calls:", self.total_calls)
+        print("Transpo table:", len(self.transpo_table))
 
     # board is supposed to be a Board object
     # return True if the current player has a winning move
@@ -43,7 +49,14 @@ class Win_Loss:
                         board.remove_last_play()
                         return True
 
-                    result = self.recursive_win_loss(board, depth+1)
+                    str_rep = board.string_rep()
+                    if str_rep in self.transpo_table:
+                        result = False
+                    else:
+                        result = self.recursive_win_loss(board, depth+1)
+                        if result == False:
+                            self.transpo_table.add(str_rep)
+
                     if result == False:
                         #opponent loses, so this is a win
                         board.remove_last_play()
