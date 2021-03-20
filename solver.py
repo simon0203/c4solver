@@ -2,7 +2,7 @@
 
 # for process_time()
 import time
-
+import copy
 from board import Board
 
 class Win_Loss:
@@ -11,12 +11,11 @@ class Win_Loss:
         self.elapsed_time = 0
         self.transpo_table = set()
 
-    def compute_is_win(self, board):
-        self.total_calls = 0
-
-        #note : we clear the transpo table for now (could be changed later)
+    def clear_tranpo_table(self):
         self.transpo_table = set()
 
+    def compute_is_win(self, board):
+        self.total_calls = 0
         t_start = time.process_time()
         result = self.recursive_win_loss(board)
         t_stop = time.process_time()
@@ -32,8 +31,12 @@ class Win_Loss:
     # return True if the current player has a winning move
     def recursive_win_loss(self, board, depth=0):
         self.total_calls += 1
+
         board.order_moves()
-        for j in board.ordered_moves:
+        #note: deep copy needed because board can be changed in further recursive calls
+        ordered_moves = copy.deepcopy(board.ordered_moves)
+
+        for j in ordered_moves:
             if depth<3:
                 s = ""
                 for k in range(depth+1):
@@ -65,6 +68,29 @@ class Win_Loss:
         # all moves resulted in an opponent win, so this is a loss
         return False
 
+    # return a winning move (if there is one) for the given position
+    # board is modified with the winning move
+    # mainly for use against a testing human player
+    def best_move(self, board):
+        result = self.recursive_win_loss(board)
+        if result == False:
+            # Loss position, any move is ok, play randomly
+            board.order_moves()
+            for j in board.ordered_moves:
+                if board.play(j):
+                    return board.ordered_moves[0]
+        else:
+            # this is a Win, find the winning move in the transpo table
+            board.order_moves()
+            for j in board.ordered_moves:
+                if board.play(j):
+                    str_rep = board.string_rep()
+                    if str_rep in self.transpo_table:
+                        return j
+                    else:
+                        board.remove_last_play()
+
+
 if __name__ == "__main__":
     b = Board(nb_rows=4, nb_cols=5)
     b.show()
@@ -73,3 +99,26 @@ if __name__ == "__main__":
     result = compute.compute_is_win(b)
     print("is_win=", result)
     compute.show_stats()
+
+    # check a short sequence of best moves
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    compute.best_move(b)
+    b.show()
+    
