@@ -54,6 +54,42 @@ class Board:
                     str_rep += "."
         return str_rep
 
+    # init the board from a string representation
+    def init_from_string(self, str_rep):
+        # check string representation length is compatible with board dimensions
+        if self.nb_rows*self.nb_cols != len(str_rep):
+            return
+
+        for i in range(self.nb_rows):
+            for j in range(self.nb_cols):
+                cell = str_rep[i*self.nb_cols+j]
+                if cell == 'O':
+                    self.board[i][j] = 1
+                elif cell == 'X':
+                    self.board[i][j] = 2
+                else:
+                    self.board[i][j] = 0
+        
+        self.init_board_variables()
+
+    # function to init the internal board variables (like number of empty squares in each column)
+    # should be called after an init of the board with a representation string
+    def init_board_variables(self):
+        self.total_empty = self.nb_rows * self.nb_cols
+
+        for j in range(self.nb_cols):
+            self.heights[j] = 0
+            for i in range(self.nb_rows):
+                if self.board[i][j] != 0:
+                    self.heights[j] += 1
+                    self.total_empty -= 1
+
+        # player 1 to play if parity of empty squares is similar to empty board
+        if self.total_empty % 2 == self.nb_rows*self.nb_cols % 2:
+            self.player = 1
+        else:
+            self.player = 2
+
     def reverse_player(self):
         if self.player == 1:
             self.player = 2
@@ -248,3 +284,10 @@ if __name__ == "__main__":
     # test of string representation
     print("String representation:")
     print(b.string_rep())
+
+    # test of init from string representation
+    # should obtain the same string
+    c = Board()
+    c.init_from_string(b.string_rep())
+    print("Init with above string representation")
+    print(c.string_rep())
