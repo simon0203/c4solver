@@ -98,13 +98,20 @@ if __name__ == "__main__":
     b = Board()
     
     # not reachable yet ?
-    allis_3_10 = "...OXO....XOX....OOO....XXX..............."
+    allis_3_10 = "...OXO. ...XOX. ...OOO. ...XXX. ....... ......."
     
-    allis_3_14 = "OXOOX...OXXX...OOOX.....XO................"
+    allis_3_14 = "OXOOX.. .OXXX.. .OOOX.. ...XO.. ....... ......."
 
-    allis_3_10_simple = "O..OXO.X..XOX....OOO....XXX..............."
+    allis_3_10_simplified = "O..OXO. X..XOX. ...OOO. ...XXX. ....... ......."
 
-    b.init_from_string(allis_3_14)
+    allis_4_1 = "X.OOX.. ..XXX.. ..OO... ...O... ...O... ...X..."
+    allis_4_2 = "X.OOX.. X.XXX.. ..OO... ..OO... ...O... ...X..."
+    allis_4_5 = "OXOOX.. .OXXX.. .OOOX.. ..XXO.. ...O... ...X..."
+
+    allis_4_7 = "X.OOX.X ..XXX.. ..OOO.. ...O... ...O... ...X..."
+
+
+    b.init_from_string(allis_4_7)
     b.show()
 
     compute = Win_Loss()

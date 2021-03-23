@@ -55,21 +55,29 @@ class Board:
         return str_rep
 
     # init the board from a string representation
+    # note : we allow useless characters (like space) for readability
     def init_from_string(self, str_rep):
         # check string representation length is compatible with board dimensions
-        if self.nb_rows*self.nb_cols != len(str_rep):
-            return
+        # if self.nb_rows*self.nb_cols != len(str_rep):
+        #    return
 
+        k = 0
         for i in range(self.nb_rows):
             for j in range(self.nb_cols):
-                cell = str_rep[i*self.nb_cols+j]
-                if cell == 'O':
-                    self.board[i][j] = 1
-                elif cell == 'X':
-                    self.board[i][j] = 2
-                else:
-                    self.board[i][j] = 0
-        
+                next_cell_found = False
+                while not next_cell_found and k < len(str_rep):
+                    cell = str_rep[k]
+                    if cell == 'O':
+                        self.board[i][j] = 1
+                        next_cell_found = True
+                    elif cell == 'X':
+                        self.board[i][j] = 2
+                        next_cell_found = True
+                    elif cell == '.':
+                        self.board[i][j] = 0
+                        next_cell_found = True
+                    k += 1
+
         self.init_board_variables()
 
     # function to init the internal board variables (like number of empty squares in each column)
@@ -411,3 +419,12 @@ if __name__ == "__main__":
     c.init_from_string(b.string_rep())
     print("Init with above string representation")
     print(c.string_rep())
+
+    # init from string representation
+    print("")
+    print("Init with allis_4_1:")
+    allis_4_1 = "X.OOX.. ..XXX.. ..OO... ...O... ...O... ...X..."
+    print(allis_4_1)
+    c = Board()
+    c.init_from_string(allis_4_1)
+    c.show()
