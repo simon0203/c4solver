@@ -92,13 +92,27 @@ class Win_Loss:
 
 
 if __name__ == "__main__":
-    b = Board(nb_rows=4, nb_cols=5)
-    b.show()
+    #b = Board(nb_rows=4, nb_cols=5)
+    #b.show()
     
+    b = Board()
+    
+    # not reachable yet ?
+    allis_3_10 = "...OXO....XOX....OOO....XXX..............."
+    
+    allis_3_14 = "OXOOX...OXXX...OOOX.....XO................"
+
+    allis_3_10_simple = "O..OXO.X..XOX....OOO....XXX..............."
+
+    b.init_from_string(allis_3_14)
+    b.show()
+
     compute = Win_Loss()
     result = compute.compute_is_win(b)
     print("is_win=", result)
     compute.show_stats()
+
+    #exit()
 
     # check a short sequence of best moves
     compute.best_move(b)
