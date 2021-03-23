@@ -114,6 +114,105 @@ class Board:
             # this column is already full, not valid play
             return False
 
+    def line_state(self, i, j, v):
+        nb_lines = [0, 0, 0, 0]
+
+        # possible vertical line
+        if i >= 3:
+            t = [self.board[i-1][j], self.board[i-2][j], self.board[i-3][j]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        # possible horizontal lines
+        if j-3 >= 0:
+            t = [self.board[i][j-3], self.board[i][j-2], self.board[i][j-1]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-2 >= 0 and j+1 < self.nb_cols:
+            t = [self.board[i][j-2], self.board[i][j-1], self.board[i][j+1]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-1 >= 0 and j+2 < self.nb_cols:
+            t = [self.board[i][j-1], self.board[i][j+1], self.board[i][j+2]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j+3 < self.nb_cols:
+            t = [self.board[i][j+1], self.board[i][j+2], self.board[i][j+3]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        # possible diagonal lines
+        if j-3 >= 0 and i-3 >= 0:
+            t = [self.board[i-3][j-3], self.board[i-2][j-2], self.board[i-1][j-1]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-2 >= 0 and i-2 >= 0 and j+1 < self.nb_cols and i+1 < self.nb_rows:
+            t = [self.board[i-2][j-2], self.board[i-1][j-1], self.board[i+1][j+1]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-1 >= 0 and i-1 >= 0 and j+2 < self.nb_cols and i+2 < self.nb_rows:
+            t = [self.board[i-1][j-1], self.board[i+1][j+1], self.board[i+1][j+2]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j+3 < self.nb_cols and i+3 < self.nb_rows:
+            t = [self.board[i+1][j+1], self.board[i+2][j+2], self.board[i+3][j+3]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-3 >= 0 and i+3 < self.nb_rows:
+            t = [self.board[i+3][j-3], self.board[i+2][j-2], self.board[i+1][j-1]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-2 >= 0 and i+2 < self.nb_rows and j+1 < self.nb_cols and i-1 >= 0:
+            t = [self.board[i+2][j-2], self.board[i+1][j-1], self.board[i-1][j+1]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j-1 >= 0 and i+1 < self.nb_rows and j+2 < self.nb_cols and i-2 >= 0:
+            t = [self.board[i+1][j-1], self.board[i-1][j+1], self.board[i-1][j+2]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        if j+3 < self.nb_cols and i-3 >= 0:
+            t = [self.board[i-1][j+1], self.board[i-2][j+2], self.board[i-3][j+3]]
+            a = t.count(v)
+            b = t.count('0')
+            if a+b == 4:
+               nb_lines[a] += 1
+
+        return nb_lines
+
     def update_win(self, j):
         # note : [i][j] is supposed to be equal to self.player (so not tested below)
         i = self.heights[j] -1
@@ -226,6 +325,27 @@ class Board:
         for j in range(self.nb_cols):
             if self.heights[j] < self.nb_rows:
                 self.ordered_moves.append(j)
+
+        # priority to moves improving line completion
+        # lines = [-1 for j in range(self.nb_cols)]
+        # for j in range(self.nb_cols):
+        #     if self.heights[j] < self.nb_rows:
+        #         line_state_result = self.line_state(self.heights[j], j, self.player)
+        #         if self.player == 1:
+        #             opp = 2
+        #         else:
+        #             opp =1
+        #         line_opp = self.line_state(self.heights[j], j, opp)
+
+        #         #print(lines)
+        #         #print(line_state_result)
+        #         lines[j] = line_state_result[0]+ 20*line_state_result[1] + 400*line_state_result[2] + 8000*line_state_result[3]
+        #         lines[j] += line_opp[0]+ 20*line_opp[1] + 400*line_opp[2] + 8000*line_opp[3]
+        #         #self.ordered_moves.append(j)
+        # while(lines.count(-1) < self.nb_cols):
+        #     max_index = lines.index(max(lines))
+        #     self.ordered_moves.append(max_index)
+        #     lines[max_index] = -1
 
         # priority to follow-up moves
         # followup_j = -1
