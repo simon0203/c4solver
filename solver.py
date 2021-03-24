@@ -100,11 +100,10 @@ if __name__ == "__main__":
     # not reachable yet ?
     # diagram 3.10, player 1, win
     allis_3_10 = "...OXO. ...XOX. ...OOO. ...XXX. ....... ......."
+    allis_3_10_simplified = "O..OXO. X..XOX. ...OOO. ...XXX. ....... ......."
     
     # diagram 3.14, player 2, loss
     allis_3_14 = "OXOOX.. .OXXX.. .OOOX.. ...XO.. ....... ......."
-
-    allis_3_10_simplified = "O..OXO. X..XOX. ...OOO. ...XXX. ....... ......."
 
     # diagram 4.1, player 1, loss
     allis_4_1 = "X.OOX.. ..XXX.. ..OO... ...O... ...O... ...X..."
@@ -118,8 +117,22 @@ if __name__ == "__main__":
     # diagram 4.7, player 1, loss
     allis_4_7 = "X.OOX.X ..XXX.. ..OOO.. ...O... ...O... ...X..."
 
+    # diagram 5.4, player 1, loss
+    allis_5_4 = "..OOX.X ..OXX.O ..XO..X ..OX..O ..XX..X ..OO..O"
 
-    b.init_from_string(allis_4_7)
+    # diagram 11.1, player 1, win
+    allis_11_1 = "..OOX.. ..XXX.. ..OO... ....... ....... ......."
+
+    # diagram 11.1 after move5, player 1, win
+    allis_11_1_move5 = "OXOOX.. ..XXX.. ..OO... ....... ....... ......."
+
+    # diagram 11.1 after move 5 and 6, player 1, win
+    allis_11_1_move6 = "OXOOX.. .OXXX.. ..OO... ...X... ....... ......."
+
+    # diagram 11.1 after move 5, 6 and 7, player 1, win
+    allis_11_1_move7 = "OXOOX.. .OXXX.. .OOOX.. ...X... ....... ......."
+
+    b.init_from_string(allis_3_10_simplified)
     b.show()
 
     compute = Win_Loss()
@@ -127,27 +140,25 @@ if __name__ == "__main__":
     print("is_win=", result)
     compute.show_stats()
 
-    #exit()
-
     # check a short sequence of best moves
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
-    compute.best_move(b)
-    b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
+    # compute.best_move(b)
+    # b.show()
     
