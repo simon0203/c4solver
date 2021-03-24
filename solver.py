@@ -98,16 +98,24 @@ if __name__ == "__main__":
     b = Board()
     
     # not reachable yet ?
+    # diagram 3.10, player 1, win
     allis_3_10 = "...OXO. ...XOX. ...OOO. ...XXX. ....... ......."
     
+    # diagram 3.14, player 2, loss
     allis_3_14 = "OXOOX.. .OXXX.. .OOOX.. ...XO.. ....... ......."
 
     allis_3_10_simplified = "O..OXO. X..XOX. ...OOO. ...XXX. ....... ......."
 
+    # diagram 4.1, player 1, loss
     allis_4_1 = "X.OOX.. ..XXX.. ..OO... ...O... ...O... ...X..."
+
+    # diagram 4.2, player 1, loss
     allis_4_2 = "X.OOX.. X.XXX.. ..OO... ..OO... ...O... ...X..."
+
+    # diagram 4.5, player 1, win
     allis_4_5 = "OXOOX.. .OXXX.. .OOOX.. ..XXO.. ...O... ...X..."
 
+    # diagram 4.7, player 1, loss
     allis_4_7 = "X.OOX.X ..XXX.. ..OOO.. ...O... ...O... ...X..."
 
 

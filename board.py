@@ -122,6 +122,10 @@ class Board:
             # this column is already full, not valid play
             return False
 
+    # return a vector of 4 values indicating the number of lines going through cell (i, j)
+    # with 0, 1, 2, 3 token still possible for player v
+    #note 1 : seems a bit too slow to be effective (maybe effectiveness depends a lot on the position)
+    #note 2 : code to go through the lines is very similar to codes to check if a win was reached
     def line_state(self, i, j, v):
         nb_lines = [0, 0, 0, 0]
 
