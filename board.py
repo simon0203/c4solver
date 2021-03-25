@@ -1,5 +1,10 @@
 # Board class to represent a board of connect-four game
 
+class Line:
+    def __init__(self, line_index, line_coordinates):
+        self.line_index = line_index
+        self.line_coordinates = line_coordinates
+
 class Board:
     # default board size is 6x7
     def __init__(self, nb_rows=6, nb_cols=7):
@@ -26,6 +31,8 @@ class Board:
 
         # move ordering
         self.ordered_moves = []
+
+        self.lines = []
 
     # print a readable board representation
     def show(self):
@@ -121,6 +128,45 @@ class Board:
         else:
             # this column is already full, not valid play
             return False
+
+    # create a table with the list of possible lines in the board
+    # this table is used to store the status of each line (possible for player 1, possible for player 2, not possible anymore)
+    def create_line_list(self):        
+        line_index = 0
+        for j in range(self.nb_cols):
+            for i in range(self.nb_rows):
+                # possible vertical line starting at (i,j)
+                if i + 3 < self.nb_rows:
+                    t = ((i,j), (i+1,j), (i+2,j), (i+3,j))
+                    line = Line(line_index, line_coordinates=t)
+                    self.lines.append(line)
+                    line_index += 1
+
+                # possible horizontal line starting at (i,j)
+                if j+3 < self.nb_cols:
+                    t = ((i,j), (i,j+1), (i,j+2), (i,j+3))
+                    line = Line(line_index, line_coordinates=t)
+                    self.lines.append(line)
+                    line_index += 1
+
+                # possible diagonal lines starting at (i,j)
+                if j+3 < self.nb_cols and i+3 < self.nb_rows:
+                    t = ((i,j), (i+1,j+1), (i+2,j+2), (i+3,j+3))
+                    line = Line(line_index, line_coordinates=t)
+                    self.lines.append(line)
+                    line_index += 1
+
+                if j+3 < self.nb_cols and i-3 >= 0:
+                    t = ((i,j), (i-1,j+1), (i-2,j+2), (i-3,j+3))
+                    line = Line(line_index, line_coordinates=t)
+                    self.lines.append(line)
+                    line_index += 1
+
+    def print_line_list(self):
+        print("number of lines:", len(self.lines))
+        for line in self.lines:
+            print("line index:", line.line_index)
+            print("coordinates:", line.line_coordinates)
 
     # return a vector of 4 values indicating the number of lines going through cell (i, j)
     # with 0, 1, 2, 3 token still possible for player v
@@ -432,3 +478,7 @@ if __name__ == "__main__":
     c = Board()
     c.init_from_string(allis_4_1)
     c.show()
+
+    # line list
+    c.create_line_list()
+    c.print_line_list()
