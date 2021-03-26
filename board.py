@@ -8,12 +8,31 @@ class Line:
         # list of (i,j) coordinates of the line in the board
         self.line_coordinates = line_coordinates
 
-        # number of tokens of player 1  and player 2 in the line
+        # number of tokens of player 1 and player 2 in the line
         self.tokens = [0, 0]
 
         # line status: 0=open, 1=possible only for player 1, 2=possible only for player 2, 3=not possible anymore
         self.status = 0
 
+    def add_play(self, player):
+        self.tokens[player-1] += 1
+        if self.status == 0:
+            #line now only possible for current player 
+            self.status = player
+        elif self.status != player:
+            #line was possible for opponent, now not possible for any player
+            self. status = 3
+        #print("line_add_update", self.line_index, self.line_coordinates, self.tokens, self.status)
+
+    def remove_play(self, player):
+        self.tokens[player-1] -= 1
+        if self.tokens[0] == 0 and self.tokens[1] == 0:
+            self.status = 0
+        elif self.tokens[0] == 0:
+            self.status = 2
+        elif self.tokens[1] == 0:
+            self.status = 1
+        #print("line_remove_update", self.line_index, self.line_coordinates, self.tokens, self.status)
 
 class Board:
     # default board size is 6x7
@@ -49,6 +68,9 @@ class Board:
         # dictionary to know the lines going through a given (i,j) cell
         # keys = (i,j) values =[line_index1, line_index2, ...], the line indexes going through (i,j)
         self.lines_lookup = {}
+
+        # initialize the lines list and lookup table
+        self.create_line_list()
 
     # print a readable board representation
     def show(self):
@@ -136,6 +158,7 @@ class Board:
             self.heights[j] = col_height + 1
             self.total_empty = self.total_empty -1
             self.play_list.append(j)
+            self.update_line_status(i=col_height, j=j, is_remove=False)
             self.update_win(j)
 
             self.reverse_player()
@@ -187,6 +210,17 @@ class Board:
             dict_value = self.lines_lookup.setdefault((i,j), [])
             dict_value.append(line_index)
             self.lines_lookup[(i,j)] = dict_value
+
+    # update the status of each line going through the cell (i,j)
+    # if is_remove=True, a token was added by current player in (i, j)
+    # if is_remove=False, a token was removed
+    def update_line_status(self, i, j, is_remove = False):
+        target_lines = self.lines_lookup[(i,j)]
+        for line_index in target_lines:
+            if is_remove:
+                self.lines[line_index].remove_play(self.player)
+            else:
+                self.lines[line_index].add_play(self.player)
 
     def print_line_list(self):
         print("===number of lines:", len(self.lines))
@@ -397,6 +431,7 @@ class Board:
             self.total_empty = self.total_empty + 1
             self.is_win = False
             self.reverse_player()
+            self.update_line_status(i=i, j=j, is_remove=True)
 
     def is_finished(self):
         if self.total_empty > 0:
@@ -508,5 +543,4 @@ if __name__ == "__main__":
     c.show()
 
     # line list
-    c.create_line_list()
     c.print_line_list()
