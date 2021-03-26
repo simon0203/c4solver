@@ -2,8 +2,18 @@
 
 class Line:
     def __init__(self, line_index, line_coordinates):
+        # line index in the list of lines (note : maybe not needed)
         self.line_index = line_index
+
+        # list of (i,j) coordinates of the line in the board
         self.line_coordinates = line_coordinates
+
+        # number of tokens of player 1  and player 2 in the line
+        self.tokens = [0, 0]
+
+        # line status: 0=open, 1=possible only for player 1, 2=possible only for player 2, 3=not possible anymore
+        self.status = 0
+
 
 class Board:
     # default board size is 6x7
@@ -32,7 +42,13 @@ class Board:
         # move ordering
         self.ordered_moves = []
 
+        #------------------- Lines --------------
+        # list of all lines on the board (storing coordinates and status)
         self.lines = []
+
+        # dictionary to know the lines going through a given (i,j) cell
+        # keys = (i,j) values =[line_index1, line_index2, ...], the line indexes going through (i,j)
+        self.lines_lookup = {}
 
     # print a readable board representation
     def show(self):
@@ -140,6 +156,7 @@ class Board:
                     t = ((i,j), (i+1,j), (i+2,j), (i+3,j))
                     line = Line(line_index, line_coordinates=t)
                     self.lines.append(line)
+                    self.add_line_to_lookup(t, line_index)
                     line_index += 1
 
                 # possible horizontal line starting at (i,j)
@@ -147,6 +164,7 @@ class Board:
                     t = ((i,j), (i,j+1), (i,j+2), (i,j+3))
                     line = Line(line_index, line_coordinates=t)
                     self.lines.append(line)
+                    self.add_line_to_lookup(t, line_index)
                     line_index += 1
 
                 # possible diagonal lines starting at (i,j)
@@ -154,19 +172,29 @@ class Board:
                     t = ((i,j), (i+1,j+1), (i+2,j+2), (i+3,j+3))
                     line = Line(line_index, line_coordinates=t)
                     self.lines.append(line)
+                    self.add_line_to_lookup(t, line_index)
                     line_index += 1
 
                 if j+3 < self.nb_cols and i-3 >= 0:
                     t = ((i,j), (i-1,j+1), (i-2,j+2), (i-3,j+3))
                     line = Line(line_index, line_coordinates=t)
                     self.lines.append(line)
+                    self.add_line_to_lookup(t, line_index)
                     line_index += 1
 
+    def add_line_to_lookup(self, line_coordinates, line_index):
+        for (i,j) in line_coordinates:
+            dict_value = self.lines_lookup.setdefault((i,j), [])
+            dict_value.append(line_index)
+            self.lines_lookup[(i,j)] = dict_value
+
     def print_line_list(self):
-        print("number of lines:", len(self.lines))
+        print("===number of lines:", len(self.lines))
         for line in self.lines:
-            print("line index:", line.line_index)
-            print("coordinates:", line.line_coordinates)
+            print("line", line.line_index, "coordinates:", line.line_coordinates)
+        print("====lookup table:")
+        for key in self.lines_lookup:
+            print("cell", key, "  lines:", self.lines_lookup[key])
 
     # return a vector of 4 values indicating the number of lines going through cell (i, j)
     # with 0, 1, 2, 3 token still possible for player v
