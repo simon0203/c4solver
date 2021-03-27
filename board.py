@@ -62,9 +62,6 @@ class Board:
         # list of played moves (used to reverse a move)
         self.play_list = []
 
-        # move ordering
-        self.ordered_moves = []
-
         #------------------- Lines --------------
         # list of all lines on the board (storing coordinates and status)
         self.lines = []
@@ -295,13 +292,15 @@ class Board:
         else:
             return True
 
-    def order_moves(self):
-        self.ordered_moves = []
+    # return a list of playable moves, ordered with some priority
+    def get_ordered_moves(self):
+        ordered_moves = []
 
         # simple order (available column order)
         # for j in range(self.nb_cols):
         #     if self.heights[j] < self.nb_rows:
-        #         self.ordered_moves.append(j)
+        #         ordered_moves.append(j)
+        # return ordered_moves
 
         # priority to moves finishing a line, otherwise column order
         move_priority_weight = [-1 for j in range(self.nb_cols)]
@@ -323,8 +322,10 @@ class Board:
         # find the move with biggest priority weight, remove it from the list of weigths, and repeat
         while(move_priority_weight.count(-1) < self.nb_cols):
             max_index = move_priority_weight.index(max(move_priority_weight))
-            self.ordered_moves.append(max_index)
+            ordered_moves.append(max_index)
             move_priority_weight[max_index] = -1
+
+        return ordered_moves
 
         # priority to follow-up moves
         # followup_j = -1

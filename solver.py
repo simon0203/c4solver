@@ -32,9 +32,7 @@ class Win_Loss:
     def recursive_win_loss(self, board, depth=0):
         self.total_calls += 1
 
-        board.order_moves()
-        #note: deep copy needed because board can be changed in further recursive calls
-        ordered_moves = copy.deepcopy(board.ordered_moves)
+        ordered_moves = board.get_ordered_moves()
 
         for j in ordered_moves:
             if depth<3:
@@ -75,14 +73,14 @@ class Win_Loss:
         result = self.recursive_win_loss(board)
         if result == False:
             # Loss position, any move is ok, play randomly
-            board.order_moves()
-            for j in board.ordered_moves:
+            ordered_moves = board.get_ordered_moves()
+            for j in ordered_moves:
                 if board.play(j):
-                    return board.ordered_moves[0]
+                    return ordered_moves[0]
         else:
             # this is a Win, find the winning move in the transpo table
-            board.order_moves()
-            for j in board.ordered_moves:
+            ordered_moves = board.get_ordered_moves()
+            for j in ordered_moves:
                 if board.play(j):
                     str_rep = board.string_rep()
                     if str_rep in self.transpo_table:
@@ -131,7 +129,7 @@ if __name__ == "__main__":
     # diagram 11.1 after move 5, 6 and 7, player 1, win
     allis_11_1_move7 = "OXOOX.. .OXXX.. .OOOX.. ...X... ....... ......."
 
-    b.init_from_string(allis_4_5)
+    b.init_from_string(allis_4_7)
     b.show()
 
     compute = Win_Loss()
