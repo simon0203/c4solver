@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # diagram 11.1 after move 5, 6 and 7, player 1, win
     allis_11_1_move7 = "OXOOX.. .OXXX.. .OOOX.. ...X... ....... ......."
 
-    b.init_from_string(allis_3_14)
+    b.init_from_string(allis_4_5)
     b.show()
 
     compute = Win_Loss()
