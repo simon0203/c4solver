@@ -17,11 +17,11 @@ class Line:
     def add_play(self, player):
         self.tokens[player-1] += 1
         if self.status == 0:
-            #line now only possible for current player 
+            #line now only possible for current player
             self.status = player
         elif self.status != player:
-            #line was possible for opponent, now not possible for any player
-            self. status = 3
+            #line was possible for opponent or already not possible, now not possible for any player
+            self.status = 3
         #print("line_add_update", self.line_index, self.line_coordinates, self.tokens, self.status)
 
     def remove_play(self, player):
@@ -32,6 +32,10 @@ class Line:
             self.status = 2
         elif self.tokens[1] == 0:
             self.status = 1
+        
+        # note: the last case is tokens for both players still already present,
+        # the line status is supposed to be 3 (not possible anymore) and remains 3
+        
         #print("line_remove_update", self.line_index, self.line_coordinates, self.tokens, self.status)
 
 class Board:
@@ -124,6 +128,7 @@ class Board:
                     k += 1
 
         self.init_board_variables()
+        self.init_all_lines_status()
 
     # function to init the internal board variables (like number of empty squares in each column)
     # should be called after an init of the board with a representation string
@@ -221,6 +226,18 @@ class Board:
                 self.lines[line_index].remove_play(self.player)
             else:
                 self.lines[line_index].add_play(self.player)
+
+    # initialize all lines status
+    # needed after initializing the board with a given representation string 
+    def init_all_lines_status(self):
+        current_player_sav = self.player
+        for j in range(self.nb_cols):
+            for i in range(self.nb_rows):
+                if self.board[i][j]!=0:
+                    # temporary change the current player
+                    self.player = self.board[i][j]
+                    self.update_line_status(i, j)
+        self.player = current_player_sav
 
     def print_line_list(self):
         print("===number of lines:", len(self.lines))
@@ -338,82 +355,10 @@ class Board:
         i = self.heights[j] -1
         #print(i, j)
 
-        # possible vertical win
-        if i >= 3:
-            if self.board[i-1][j] == self.player and self.board[i-2][j] == self.player and self.board[i-3][j] == self.player:
+        target_lines = self.lines_lookup[(i,j)]
+        for line_index in target_lines:
+            if self.lines[line_index].tokens[self.player -1] == 4:
                 self.is_win = True
-                #print("win 0")
-                return
-
-        # possible horizontal wins
-        if j-3 >= 0:
-            if self.board[i][j-3] == self.player and self.board[i][j-2] == self.player and self.board[i][j-1] == self.player:
-                self.is_win = True
-                #print("win 1")
-                return
-        if j-2 >= 0 and j+1 < self.nb_cols:
-            if self.board[i][j-2] == self.player and self.board[i][j-1] == self.player and self.board[i][j+1] == self.player:
-                self.is_win = True
-                #print("win 2")
-                return
-        if j-1 >= 0 and j+2 < self.nb_cols:
-            if self.board[i][j-1] == self.player and self.board[i][j+1] == self.player and self.board[i][j+2] == self.player:
-                self.is_win = True
-                #print("win 3")
-                return
-        if j+3 < self.nb_cols:
-            if self.board[i][j+1] == self.player and self.board[i][j+2] == self.player and self.board[i][j+3] == self.player:
-                self.is_win = True
-                #print("win 4")
-                return
-
-        # possible diagonal wins
-        if j-3 >= 0 and i-3 >= 0:
-            if self.board[i-3][j-3] == self.player and self.board[i-2][j-2] == self.player and self.board[i-1][j-1] == self.player:
-                self.is_win = True
-                #print("win 5")
-                return
-
-        if j-2 >= 0 and i-2 >= 0 and j+1 < self.nb_cols and i+1 < self.nb_rows:
-            if self.board[i-2][j-2] == self.player and self.board[i-1][j-1] == self.player and self.board[i+1][j+1] == self.player:
-                self.is_win = True
-                #print("win 6")
-                return
-
-        if j-1 >= 0 and i-1 >= 0 and j+2 < self.nb_cols and i+2 < self.nb_rows:
-            if self.board[i-1][j-1] == self.player and self.board[i+1][j+1] == self.player and self.board[i+2][j+2] == self.player:
-                self.is_win = True
-                #print("win 7")
-                return
-
-        if j+3 < self.nb_cols and i+3 < self.nb_rows:
-            if self.board[i+1][j+1] == self.player and self.board[i+2][j+2] == self.player and self.board[i+3][j+3] == self.player:
-                self.is_win = True
-                #print("win 8")
-                return
-
-        if j-3 >= 0 and i+3 < self.nb_rows:
-            if self.board[i+3][j-3] == self.player and self.board[i+2][j-2] == self.player and self.board[i+1][j-1] == self.player:
-                self.is_win = True
-                #print("win 9")
-                return
-
-        if j-2 >= 0 and i+2 < self.nb_rows and j+1 < self.nb_cols and i-1 >= 0:
-            if self.board[i+2][j-2] == self.player and self.board[i+1][j-1] == self.player and self.board[i-1][j+1] == self.player:
-                self.is_win = True
-                #print("win 10")
-                return
-
-        if j-1 >= 0 and i+1 < self.nb_rows and j+2 < self.nb_cols and i-2 >= 0:
-            if self.board[i+1][j-1] == self.player and self.board[i-1][j+1] == self.player and self.board[i-2][j+2] == self.player:
-                self.is_win = True
-                #print("win 11")
-                return
-
-        if j+3 < self.nb_cols and i-3 >= 0:
-            if self.board[i-1][j+1] == self.player and self.board[i-2][j+2] == self.player and self.board[i-3][j+3] == self.player:
-                self.is_win = True
-                #print("win 12")
                 return
     
     def remove_last_play(self):
