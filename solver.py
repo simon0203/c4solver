@@ -53,9 +53,20 @@ class Win_Loss:
 
         ordered_moves = board.get_ordered_moves()
 
-        # look in the transposition table for an already known winning move
+        # before anything else, check obvious wins, and existence of a known transposition
         for j in ordered_moves:
             if board.play(j):
+                # obvious win by rules (4 in a row)
+                if board.is_win:
+                    board.remove_last_play()
+                    return True
+                
+                if board.is_finished():
+                    # game is finished, it implies this was a player 2 board, and he wins
+                    board.remove_last_play()
+                    return True
+
+                # existence of transposition
                 str_rep = board.string_rep()
                 board.remove_last_play()
                 if str_rep in self.transpo_table:
@@ -86,25 +97,18 @@ class Win_Loss:
                     s += "-"
                 print(s, j)
             if board.play(j):
-                if board.is_win:
+                result = self.recursive_win_loss(board, depth+1)
+                if result == False:
+                    str_rep = board.string_rep()
+                    self.transpo_table.add(str_rep)
+
+                if result == False:
+                    #opponent loses, so this is a win
                     board.remove_last_play()
                     return True
-                else:
-                    if board.is_finished():
-                        # game is finished, it implies this was a player 2 board, and he wins
-                        board.remove_last_play()
-                        return True
 
-                    result = self.recursive_win_loss(board, depth+1)
-                    if result == False:
-                        str_rep = board.string_rep()
-                        self.transpo_table.add(str_rep)
-
-                    if result == False:
-                        #opponent loses, so this is a win
-                        board.remove_last_play()
-                        return True
                 board.remove_last_play()
+
         # all moves resulted in an opponent win, so this is a loss
         return False
 
