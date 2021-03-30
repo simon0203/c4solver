@@ -9,13 +9,32 @@ class Win_Loss:
     def __init__(self):
         self.total_calls = 0
         self.elapsed_time = 0
+        
+        # transposition table of the current computation
         self.transpo_table = set()
+        
+        # transposition table of a previous computation used as an oracle
+        self.oracle_table = set()
+
+        # indicate if the current computation is a direct one or a check one
+        # in check computation, moves are ordered with the oracle table
+        self.is_check = False
 
     def clear_tranpo_table(self):
         self.transpo_table = set()
 
-    def compute_is_win(self, board):
+    def clear_oracle_table(self):
+        self.check_table = set()
+
+    def compute_is_win(self, board, is_check=False):
         self.total_calls = 0
+        self.is_check = is_check
+        if self.is_check:
+            self.oracle_table = self.transpo_table
+            self.transpo_table = set()
+            print("Check computation")
+            print("Oracle table:", len(self.oracle_table))
+
         t_start = time.process_time()
         result = self.recursive_win_loss(board)
         t_stop = time.process_time()
@@ -33,6 +52,22 @@ class Win_Loss:
         self.total_calls += 1
 
         ordered_moves = board.get_ordered_moves()
+
+        # for check computations, give priority to winning moves in the oracle table
+        if self.is_check:
+            winning_move = None
+            for j in ordered_moves:
+                if board.play(j):
+                    str_rep = board.string_rep()
+                    board.remove_last_play()
+                    if str_rep in self.oracle_table:
+                        # loss for opponent, so this is a winning move
+                        winning_move = j
+                        break
+            if winning_move != None:
+                # add the winning move in front of the list of moves
+                # note : no need to delete the winning move from its original position in the list
+                ordered_moves.insert(0, winning_move)
 
         for j in ordered_moves:
             if depth<3:
@@ -97,7 +132,6 @@ if __name__ == "__main__":
     
     # diagram 3.10, player 1, win
     allis_3_10 = "...OXO. ...XOX. ...OOO. ...XXX. ....... ......."
-    allis_3_10_simplified = "O..OXO. X..XOX. ...OOO. ...XXX. ....... ......."
     
     # diagram 3.14, player 2, loss
     allis_3_14 = "OXOOX.. .OXXX.. .OOOX.. ...XO.. ....... ......."
@@ -129,11 +163,15 @@ if __name__ == "__main__":
     # diagram 11.1 after move 5, 6 and 7, player 1, win
     allis_11_1_move7 = "OXOOX.. .OXXX.. .OOOX.. ...X... ....... ......."
 
-    b.init_from_string(allis_4_7)
+    b.init_from_string(allis_3_14)
     b.show()
 
     compute = Win_Loss()
     result = compute.compute_is_win(b)
+    print("is_win=", result)
+    compute.show_stats()
+
+    result = compute.compute_is_win(b, is_check=True)
     print("is_win=", result)
     compute.show_stats()
 
