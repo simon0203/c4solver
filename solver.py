@@ -102,11 +102,9 @@ class Win_Loss:
             board.play(j)
             result = self.recursive_win_loss(board, depth+1)
             if result == False:
+                # opponent loss
                 str_rep = board.string_rep()
                 self.transpo_table.add(str_rep)
-
-            if result == False:
-                #opponent loses, so this is a win
                 board.remove_last_play()
                 return True
 
