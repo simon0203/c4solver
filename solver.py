@@ -55,35 +55,37 @@ class Win_Loss:
 
         # before anything else, check obvious wins, and existence of a known transposition
         for j in ordered_moves:
-            if board.play(j):
-                # obvious win by rules (4 in a row)
-                if board.is_win:
-                    board.remove_last_play()
-                    return True
-                
-                if board.is_finished():
-                    # game is finished, it implies this was a player 2 board, and he wins
-                    board.remove_last_play()
-                    return True
+            board.play(j)
 
-                # existence of transposition
-                str_rep = board.string_rep()
+            # obvious win by rules (4 in a row)
+            if board.is_win:
                 board.remove_last_play()
-                if str_rep in self.transpo_table:
-                    # loss for opponent, so this is an already known winning move, nothing to do
-                    return True
+                return True
+            
+            if board.is_finished():
+                # game is finished, it implies this was a player 2 board, and he wins
+                board.remove_last_play()
+                return True
+
+            # existence of transposition
+            str_rep = board.string_rep()
+            board.remove_last_play()
+            if str_rep in self.transpo_table:
+                # loss for opponent, so this is an already known winning move, nothing to do
+                return True
 
         # for check computations, give priority to winning moves in the oracle table
         if self.is_check:
             winning_move = None
             for j in ordered_moves:
-                if board.play(j):
-                    str_rep = board.string_rep()
-                    board.remove_last_play()
-                    if str_rep in self.oracle_table:
-                        # loss for opponent, so this is a winning move
-                        winning_move = j
-                        break
+                board.play(j)
+
+                str_rep = board.string_rep()
+                board.remove_last_play()
+                if str_rep in self.oracle_table:
+                    # loss for opponent, so this is a winning move
+                    winning_move = j
+                    break
             if winning_move != None:
                 # add the winning move in front of the list of moves
                 # note : no need to delete the winning move from its original position in the list
@@ -96,18 +98,19 @@ class Win_Loss:
                 for k in range(depth+1):
                     s += "-"
                 print(s, j)
-            if board.play(j):
-                result = self.recursive_win_loss(board, depth+1)
-                if result == False:
-                    str_rep = board.string_rep()
-                    self.transpo_table.add(str_rep)
+            
+            board.play(j)
+            result = self.recursive_win_loss(board, depth+1)
+            if result == False:
+                str_rep = board.string_rep()
+                self.transpo_table.add(str_rep)
 
-                if result == False:
-                    #opponent loses, so this is a win
-                    board.remove_last_play()
-                    return True
-
+            if result == False:
+                #opponent loses, so this is a win
                 board.remove_last_play()
+                return True
+
+            board.remove_last_play()
 
         # all moves resulted in an opponent win, so this is a loss
         return False
@@ -120,19 +123,19 @@ class Win_Loss:
         if result == False:
             # Loss position, any move is ok, play randomly
             ordered_moves = board.get_ordered_moves()
-            for j in ordered_moves:
-                if board.play(j):
-                    return ordered_moves[0]
+            j = ordered_moves[0]
+            board.play(j)
+            return j
         else:
             # this is a Win, find the winning move in the transpo table
             ordered_moves = board.get_ordered_moves()
             for j in ordered_moves:
-                if board.play(j):
-                    str_rep = board.string_rep()
-                    if str_rep in self.transpo_table:
-                        return j
-                    else:
-                        board.remove_last_play()
+                board.play(j)
+                str_rep = board.string_rep()
+                if str_rep in self.transpo_table:
+                    return j
+                else:
+                    board.remove_last_play()
 
 
 if __name__ == "__main__":
