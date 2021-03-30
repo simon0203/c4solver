@@ -53,6 +53,15 @@ class Win_Loss:
 
         ordered_moves = board.get_ordered_moves()
 
+        # look in the transposition table for an already known winning move
+        for j in ordered_moves:
+            if board.play(j):
+                str_rep = board.string_rep()
+                board.remove_last_play()
+                if str_rep in self.transpo_table:
+                    # loss for opponent, so this is an already known winning move, nothing to do
+                    return True
+
         # for check computations, give priority to winning moves in the oracle table
         if self.is_check:
             winning_move = None
@@ -69,6 +78,7 @@ class Win_Loss:
                 # note : no need to delete the winning move from its original position in the list
                 ordered_moves.insert(0, winning_move)
 
+        # recursive step, compute the win-loss of each possible move until finding a winning one
         for j in ordered_moves:
             if depth<3:
                 s = ""
@@ -85,13 +95,10 @@ class Win_Loss:
                         board.remove_last_play()
                         return True
 
-                    str_rep = board.string_rep()
-                    if str_rep in self.transpo_table:
-                        result = False
-                    else:
-                        result = self.recursive_win_loss(board, depth+1)
-                        if result == False:
-                            self.transpo_table.add(str_rep)
+                    result = self.recursive_win_loss(board, depth+1)
+                    if result == False:
+                        str_rep = board.string_rep()
+                        self.transpo_table.add(str_rep)
 
                     if result == False:
                         #opponent loses, so this is a win
